@@ -1,0 +1,15 @@
+{
+  "name": "cdgi-alumni-app",
+  "version": "1.0.0",
+  "description": "Alumni App for Chameli Devi Group of Institutions",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "keywords": [
+    "alumni",
+    "app"
+  ],
+  "author": "Rupesh Garhwal",
+  "license": "ISC"
+}
