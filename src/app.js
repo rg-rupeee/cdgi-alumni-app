@@ -9,6 +9,10 @@ const app = express();
 const initRoutes = require('./modules/index');
 const errorHandler = require('./utils/error/handler');
 const AppError = require('./utils/error/appError');
+const logger = require('./utils/logger');
+
+app.use(logger.onSuccess);
+app.use(logger.onError);
 
 // CORS
 app.use(cors());

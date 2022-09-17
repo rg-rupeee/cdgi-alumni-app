@@ -1,12 +1,13 @@
 const config = require('config');
 const { connectDB } = require('./database/index');
+const logger = require('./utils/logger');
 
 async function bootstrap() {
   // handling uncaught exception
   process.on('uncaughtException', (err) => {
-    console.log('UNCAUGHT EXCEPTION! Shutting down...');
-    console.log(err.name, err.message);
-    console.log(err);
+    logger.error('UNCAUGHT EXCEPTION! Shutting down...');
+    logger.error(err.name, err.message);
+    logger.error(err);
     process.exit(1);
   });
 
@@ -16,13 +17,13 @@ async function bootstrap() {
   // starting server
   const app = require('./app');
   const server = app.listen(config.APP.PORT, () => {
-    console.log(`Server running on port ${config.APP.PORT}`);
+    logger.info(`Server running on port ${config.APP.PORT}`);
   });
 
   // handling unhandled rejection
   process.on('unhandledRejection', (err) => {
-    console.log('UNHANDLED REJECTION! Shutting down...');
-    console.log(err);
+    logger.info('UNHANDLED REJECTION! Shutting down...');
+    logger.error(err);
     server.close(() => {
       process.exit(1);
     });
@@ -30,17 +31,17 @@ async function bootstrap() {
 
   // handling sigterm
   process.on('SIGTERM', () => {
-    console.log('SIGTERM RECEIVED. Shutting down gracefully');
+    logger.error('SIGTERM RECEIVED. Shutting down gracefully');
     server.close(() => {
-      console.log('Process terminated!');
+      logger.info('Process terminated!');
     });
   });
 
   // handling sigint
   process.on('SIGINT', () => {
-    console.log('SIGTERM RECEIVED. Shutting down gracefully');
+    logger.error('SIGTERM RECEIVED. Shutting down gracefully');
     server.close(() => {
-      console.log('Process terminated!');
+      logger.info('Process terminated!');
     });
   });
 }

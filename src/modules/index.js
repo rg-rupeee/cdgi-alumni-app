@@ -19,7 +19,7 @@ const initRoutes = () => {
         .forEach((module) => {
           const routeFile = `./${file}/${module}/${module}.route`;
           moduleRouter.use(`/${module}`, require(routeFile));
-          console.log(`Loaded API: ${file}/${module}`);
+          logger.info(`Loaded API: ${file}/${module}`);
         });
       router.use(`/${file}`, moduleRouter);
     });

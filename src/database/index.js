@@ -1,5 +1,6 @@
 const config = require('config');
 const mongoDB = require('./mongodb-handler');
+const logger = require('../utils/logger');
 
 let connection = {};
 
@@ -7,7 +8,7 @@ const connectDB = async () => {
   if (config.DB.MONGO) {
     connection.mongo = await mongoDB.connect();
   } else {
-    console.log('Mongo DB: Configuration not available in config');
+    logger.error('Mongo DB: Configuration not available in config');
   }
 
   return connection;

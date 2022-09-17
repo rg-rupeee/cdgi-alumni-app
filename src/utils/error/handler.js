@@ -6,7 +6,7 @@ const handleCastErrorDB = (err) => {
 };
 
 const handleDuplicateFieldsDB = (err) => {
-  console.log(err);
+  logger.info(err);
   const value = err.message;
 
   const message = `Duplicate field value. ${value}. Please use another value!`;
@@ -45,7 +45,7 @@ const sendError = (err, req, res) => {
 };
 
 module.exports = (err, req, res, next) => {
-  console.log(err);
+  logger.info(err);
 
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
