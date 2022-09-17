@@ -1,5 +1,6 @@
 const config = require('config');
 const mongoose = require('mongoose');
+const { setupModels } = require('../models/index');
 
 mongoose.connection.on('disconnected', () => {
   console.log('MongoDB: Disconnected');
@@ -23,8 +24,10 @@ let connection;
 const connect = async () => {
   try {
     connection = await mongoose.connect(config.DB.MONGO.URI, mongoOptions);
-
     console.log('MongoDB: successfully connected to Database');
+
+    setupModels();
+    console.log('MongoDB: Models setup successful');
   } catch (err) {
     console.log(err);
   }
