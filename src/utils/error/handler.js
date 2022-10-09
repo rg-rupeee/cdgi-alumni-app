@@ -1,4 +1,5 @@
 const AppError = require('./appError');
+const logger = require('../logger');
 
 const handleCastErrorDB = (err) => {
   const message = `Cast Error! Invalid Value ${err.path}: ${err.value}.`;
@@ -44,6 +45,7 @@ const sendError = (err, req, res) => {
   });
 };
 
+// eslint-disable-next-line no-unused-vars
 module.exports = (err, req, res, next) => {
   logger.info(err);
 
@@ -53,8 +55,9 @@ module.exports = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
-  if (error.message && error.message.startsWith('Cast'))
+  if (error.message && error.message.startsWith('Cast')) {
     error = handleCastErrorDB(error);
+  }
 
   if (error.code === 11000) error = handleDuplicateFieldsDB(error);
 
@@ -62,8 +65,9 @@ module.exports = (err, req, res, next) => {
     error._message &&
     (error._message.includes('Validation failed') ||
       error._message.includes('validation failed'))
-  )
+  ) {
     error = handleValidationErrorDB(error);
+  }
 
   if (error.name === 'JsonWebTokenError') error = handleJWTError();
 

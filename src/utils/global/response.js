@@ -10,23 +10,20 @@ exports.response = (res, statusCode, data) => {
   });
 };
 
-exports.responseOK = (res, data) => {
-  return res.status(200).json({
+exports.responseOK = (res, data) =>
+  res.status(200).json({
     status: 'success',
     data,
   });
-};
 
-exports.responseCreated = (res, data) => {
-  return res.status(201).json({
+exports.responseCreated = (res, data) =>
+  res.status(201).json({
     status: 'success',
     data,
   });
-};
 
-exports.responseBadRequest = (res, data) => {
-  return res.status(400).json({
+exports.responseBadRequest = (res, data) =>
+  res.status(400).json({
     status: 'fail',
     data,
   });
-};

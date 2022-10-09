@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const logger = require('../utils/logger');
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ const initRoutes = () => {
         .filter((module) => isDirectory(currentFile, module))
         .forEach((module) => {
           const routeFile = `./${file}/${module}/${module}.route`;
+          // eslint-disable-next-line global-require, import/no-dynamic-require
           moduleRouter.use(`/${module}`, require(routeFile));
           logger.info(`Loaded API: ${file}/${module}`);
         });

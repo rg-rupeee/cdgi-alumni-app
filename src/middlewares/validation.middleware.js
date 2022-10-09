@@ -1,9 +1,9 @@
 const catchAsync = require('./catchAsync');
 const logger = require('../utils/logger');
-const AppError = require('./../utils/error/appError');
+const AppError = require('../utils/error/appError');
 
-module.exports = (schema, additionalProperties) => {
-  return catchAsync((req, _res, next) => {
+module.exports = (schema, additionalProperties) =>
+  catchAsync((req, _res, next) => {
     const result = schema.validate(req, {
       allowUnknown: false,
       convert: true,
@@ -30,4 +30,3 @@ module.exports = (schema, additionalProperties) => {
     Object.assign(req, result.value);
     return next();
   });
-};

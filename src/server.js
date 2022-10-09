@@ -1,4 +1,5 @@
 const config = require('config');
+const app = require('./app');
 const { connectDB } = require('./database/index');
 const logger = require('./utils/logger');
 
@@ -15,7 +16,7 @@ async function bootstrap() {
   await connectDB();
 
   // starting server
-  const app = require('./app');
+
   const server = app.listen(config.APP.PORT, () => {
     logger.info(`Server running on port ${config.APP.PORT}`);
   });

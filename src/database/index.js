@@ -2,7 +2,7 @@ const config = require('config');
 const mongoDB = require('./mongodb-handler');
 const logger = require('../utils/logger');
 
-let connection = {};
+const connection = {};
 
 const connectDB = async () => {
   if (config.DB.MONGO) {

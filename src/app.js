@@ -42,11 +42,9 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 // Routes
 app.use('/api', initRoutes());
 
-app.all('*', (req, res, next) => {
-  return next(
-    new AppError(`Can't find ${req.originalUrl} on this server!`, 404)
-  );
-});
+app.all('*', (req, res, next) =>
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
+);
 
 // global error handling middleware
 app.use(errorHandler);
