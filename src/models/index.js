@@ -1,5 +1,5 @@
 const models = {};
 
-const setupModels = function setupModels() {};
+const setupModels = () => {};
 
 module.exports = { models, setupModels };
