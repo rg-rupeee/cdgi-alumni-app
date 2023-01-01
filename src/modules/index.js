@@ -5,9 +5,8 @@ const logger = require('../utils/logger');
 
 const router = express.Router();
 
-const isDirectory = (folder, source) => {
+const isDirectory = (folder, source) =>
   fs.lstatSync(path.join(folder, source)).isDirectory();
-};
 
 const initRoutes = () => {
   fs.readdirSync(__dirname)
