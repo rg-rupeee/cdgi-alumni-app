@@ -1,29 +1,29 @@
 exports.response = (res, statusCode, data) => {
-  let status = 'success';
-  if (statusCode >= 300) {
-    status = 'fail';
+  let success = true;
+  if (statusCode >= 400) {
+    success = false;
   }
 
   return res.status(statusCode).json({
-    status,
+    success,
     data,
   });
 };
 
 exports.responseOK = (res, data) =>
   res.status(200).json({
-    status: 'success',
+    success: true,
     data,
   });
 
 exports.responseCreated = (res, data) =>
   res.status(201).json({
-    status: 'success',
+    success: true,
     data,
   });
 
 exports.responseBadRequest = (res, data) =>
   res.status(400).json({
-    status: 'fail',
+    success: false,
     data,
   });

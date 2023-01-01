@@ -1,7 +1,7 @@
 const config = require('config');
 const mongoose = require('mongoose');
-const { setupModels } = require('../models/index');
-const logger = require('../utils/logger');
+const { setupModels } = require('../../models/index');
+const logger = require('../../utils/logger');
 
 mongoose.connection.on('disconnected', () => {
   logger.info('MongoDB: Disconnected');

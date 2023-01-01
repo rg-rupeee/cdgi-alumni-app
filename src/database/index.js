@@ -1,5 +1,5 @@
 const config = require('config');
-const mongoDB = require('./mongodb-handler');
+const mongoDB = require('./mongoDB');
 const logger = require('../utils/logger');
 
 const connection = {};
