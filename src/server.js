@@ -1,6 +1,6 @@
 const config = require('config');
 const app = require('./app');
-const { connectDB } = require('./database/index');
+const { connectDB } = require('./databases/index');
 const logger = require('./utils/logger');
 
 async function bootstrap() {

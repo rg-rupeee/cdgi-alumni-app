@@ -1,6 +1,6 @@
-const catchAsync = require('./catchAsync');
+const catchAsync = require('./asyncHandler');
 const logger = require('../utils/logger');
-const AppError = require('../utils/error/appError');
+const AppError = require('../utils/appError');
 
 module.exports = (schema, additionalProperties) =>
   catchAsync((req, _res, next) => {

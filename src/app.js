@@ -7,8 +7,8 @@ const cors = require('cors');
 
 const app = express();
 const initRoutes = require('./modules/index');
-const errorHandler = require('./utils/error/handler');
-const AppError = require('./utils/error/appError');
+const errorHandler = require('./middlewares/errorHandler.middleware');
+const AppError = require('./utils/appError');
 const logger = require('./utils/logger');
 
 app.use(logger.onSuccess);

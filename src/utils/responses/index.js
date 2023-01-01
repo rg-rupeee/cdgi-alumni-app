@@ -1,4 +1,4 @@
-exports.response = (res, statusCode, data) => {
+exports.Send = (res, statusCode, data) => {
   let success = true;
   if (statusCode >= 400) {
     success = false;
@@ -10,19 +10,19 @@ exports.response = (res, statusCode, data) => {
   });
 };
 
-exports.responseOK = (res, data) =>
+exports.OK = (res, data) =>
   res.status(200).json({
     success: true,
     data,
   });
 
-exports.responseCreated = (res, data) =>
+exports.Created = (res, data) =>
   res.status(201).json({
     success: true,
     data,
   });
 
-exports.responseBadRequest = (res, data) =>
+exports.BadRequest = (res, data) =>
   res.status(400).json({
     success: false,
     data,
