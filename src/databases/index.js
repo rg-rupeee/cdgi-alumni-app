@@ -1,6 +1,6 @@
 const config = require('config');
 const mongoDB = require('./mongoDB');
-const logger = require('../utils/logger');
+const logger = require('../configs/logger');
 
 const connection = {};
 

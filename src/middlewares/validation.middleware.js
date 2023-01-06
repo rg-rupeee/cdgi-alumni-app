@@ -1,5 +1,5 @@
 const asyncHandler = require('./asyncHandler');
-const logger = require('../utils/logger');
+const logger = require('../configs/logger');
 const AppError = require('../utils/appError');
 
 module.exports = (schema, additionalProperties) =>

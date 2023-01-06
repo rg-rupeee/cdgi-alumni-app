@@ -4,14 +4,10 @@ const bcrypt = require('bcrypt');
 
 const entitySchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     email: {
       type: String,
       required: true,
+      unique: true,
       validate: [isEmail, 'invalid value: email'],
     },
     password: {
