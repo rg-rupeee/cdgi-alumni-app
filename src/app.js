@@ -39,6 +39,9 @@ app.use(xss());
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
+// health-chcck
+app.get('/health-check', (req, res) => res.json({ success: true }));
+
 // Routes
 app.use('/api', initRoutes());
 
