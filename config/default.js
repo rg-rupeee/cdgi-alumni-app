@@ -12,6 +12,10 @@ const config = {
     MORGAN_LOG_LEVEL: process.env.MORGAN_LOG_LEVEL,
     SILENT_LOGGER: Boolean(process.env.SILENT_LOGGER === 'true'),
   },
+  JWT: {
+    SECRET: process.env.JWT_SECRET,
+    EXPIRY: process.env.JWT_EXPIRY,
+  },
 };
 
 module.exports = config;

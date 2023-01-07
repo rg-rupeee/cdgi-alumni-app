@@ -12,7 +12,18 @@ const entitySchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+      select: false,
+    },
+    active: {
+      type: Boolean,
+      default: false,
+    },
+    sessionId: String,
+    sessioInitiate: Date,
+    sessionOTP: String,
+    resendOTP: {
+      type: Number,
+      default: 0,
     },
     passwordChangedAt: Date,
     passwordResetOTP: Number,
@@ -21,6 +32,8 @@ const entitySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+entitySchema.index({ email: 1 });
 
 entitySchema.pre('save', async function (next) {
   // If password is not modified return
@@ -36,7 +49,7 @@ entitySchema.pre('save', function (next) {
   if (!this.isModified('password')) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
-  next();
+  return next();
 });
 
 entitySchema.methods.correctPassword = async function (

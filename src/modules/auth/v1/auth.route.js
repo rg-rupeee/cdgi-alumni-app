@@ -1,18 +1,46 @@
 const express = require('express');
+const validate = require('../../../middlewares/validation.middleware');
 const authController = require('./auth.controller');
+const authSchema = require('./auth.schema');
 
 const router = express.Router();
 
-router.post('/login', authController.login);
+router.post('/login', validate(authSchema.login), authController.login);
 
-router.post('/signup/initiate', authController.initiateSignup);
+router.post(
+  '/signup/initiate',
+  validate(authSchema.initiateSignup),
+  authController.initiateSignup
+);
 
-router.post('/signup/validate-email', authController.validateSignupEmail);
+router.post(
+  '/signup/resend-otp',
+  validate(authSchema.resendOTP),
+  authController.resendOTP
+);
 
-router.post('/validate-token', authController.validateToken);
+router.post(
+  '/signup/validate',
+  validate(authSchema.validateSignupEmail),
+  authController.validateSignupEmail
+);
 
-router.post('/forget-password', authController.forgetPassword);
+router.post(
+  '/validate-token',
+  validate(authSchema.validateToken),
+  authController.validateToken
+);
 
-router.post('/reset-password', authController.resetPassword);
+router.post(
+  '/forget-password',
+  validate(authSchema.forgetPassword),
+  authController.forgetPassword
+);
+
+router.post(
+  '/reset-password',
+  validate(authSchema.resetPassword),
+  authController.resetPassword
+);
 
 module.exports = router;

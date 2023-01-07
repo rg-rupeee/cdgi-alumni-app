@@ -3,7 +3,7 @@ const logger = require('../configs/logger');
 const AppError = require('../utils/appError');
 
 module.exports = (schema, additionalProperties) =>
-  asyncHandler((req, _res, next) => {
+  asyncHandler(async (req, _res, next) => {
     const result = schema.validate(req, {
       allowUnknown: false,
       convert: true,
