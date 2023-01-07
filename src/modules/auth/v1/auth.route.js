@@ -1,4 +1,5 @@
 const express = require('express');
+<<<<<<< HEAD
 const validate = require('../../../middlewares/validation.middleware');
 const authController = require('./auth.controller');
 const authSchema = require('./auth.schema');
@@ -43,4 +44,9 @@ router.post(
   authController.resetPassword
 );
 
+=======
+
+const router = express.Router();
+
+>>>>>>> e65d61e27dbfdcb1375ad72482d534c82fed1320
 module.exports = router;
