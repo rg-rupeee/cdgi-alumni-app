@@ -1,7 +1,7 @@
 const config = require('config');
 const app = require('./app');
 const { connectDB } = require('./databases/index');
-const logger = require('./utils/logger');
+const logger = require('./configs/logger');
 
 async function bootstrap() {
   // handling uncaught exception
@@ -45,6 +45,8 @@ async function bootstrap() {
       logger.info('Process terminated!');
     });
   });
+
+  return server;
 }
 
 bootstrap();

@@ -1,5 +1,5 @@
-const models = {};
+const mongoose = require('mongoose');
 
-const setupModels = () => {};
+const entitySchema = require('./entity/entity.schema');
 
-module.exports = { models, setupModels };
+exports.Entity = mongoose.model('Entity', entitySchema);

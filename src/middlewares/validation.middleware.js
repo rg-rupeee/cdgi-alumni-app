@@ -1,9 +1,17 @@
 const asyncHandler = require('./asyncHandler');
+<<<<<<< HEAD
+const logger = require('../configs/logger');
+const AppError = require('../utils/appError');
+
+module.exports = (schema, additionalProperties) =>
+  asyncHandler(async (req, _res, next) => {
+=======
 const logger = require('../utils/logger');
 const AppError = require('../utils/appError');
 
 module.exports = (schema, additionalProperties) =>
   asyncHandler((req, _res, next) => {
+>>>>>>> e65d61e27dbfdcb1375ad72482d534c82fed1320
     const result = schema.validate(req, {
       allowUnknown: false,
       convert: true,

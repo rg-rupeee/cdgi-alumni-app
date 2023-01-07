@@ -1,7 +1,9 @@
 const config = require('config');
 const mongoose = require('mongoose');
 const { setupModels } = require('../../models/index');
-const logger = require('../../utils/logger');
+const logger = require('../../configs/logger');
+
+mongoose.set('strictQuery', false);
 
 mongoose.connection.on('disconnected', () => {
   logger.info('MongoDB: Disconnected');
@@ -26,9 +28,6 @@ const connect = async () => {
   try {
     connection = await mongoose.connect(config.DB.MONGO.URI, mongoOptions);
     logger.info('MongoDB: successfully connected to Database');
-
-    setupModels();
-    logger.info('MongoDB: Models setup successful');
   } catch (err) {
     logger.error(err);
   }
