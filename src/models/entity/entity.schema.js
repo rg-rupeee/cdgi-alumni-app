@@ -4,12 +4,6 @@ const bcrypt = require('bcrypt');
 
 const entitySchema = new mongoose.Schema(
   {
-<<<<<<< HEAD
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-=======
     name: {
       type: String,
       required: true,
@@ -18,12 +12,11 @@ const entitySchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
->>>>>>> e65d61e27dbfdcb1375ad72482d534c82fed1320
+      unique: true,
       validate: [isEmail, 'invalid value: email'],
     },
     password: {
       type: String,
-<<<<<<< HEAD
       select: false,
     },
     active: {
@@ -36,9 +29,6 @@ const entitySchema = new mongoose.Schema(
     resendOTP: {
       type: Number,
       default: 0,
-=======
-      required: true,
->>>>>>> e65d61e27dbfdcb1375ad72482d534c82fed1320
     },
     passwordChangedAt: Date,
     passwordResetOTP: Number,
@@ -48,11 +38,8 @@ const entitySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-<<<<<<< HEAD
 entitySchema.index({ email: 1 });
 
-=======
->>>>>>> e65d61e27dbfdcb1375ad72482d534c82fed1320
 entitySchema.pre('save', async function (next) {
   // If password is not modified return
   if (!this.isModified('password')) return next();
@@ -67,11 +54,7 @@ entitySchema.pre('save', function (next) {
   if (!this.isModified('password')) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
-<<<<<<< HEAD
   return next();
-=======
-  next();
->>>>>>> e65d61e27dbfdcb1375ad72482d534c82fed1320
 });
 
 entitySchema.methods.correctPassword = async function (

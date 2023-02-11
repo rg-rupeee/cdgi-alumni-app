@@ -1,6 +1,5 @@
 const config = require('config');
 const mongoose = require('mongoose');
-const { setupModels } = require('../../models/index');
 const logger = require('../../configs/logger');
 
 mongoose.set('strictQuery', false);

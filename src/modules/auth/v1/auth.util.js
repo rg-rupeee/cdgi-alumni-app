@@ -16,8 +16,7 @@ exports.getHourDifference = (date1, date2) => Math.abs(date1 - date2) / 3600000;
 
 exports.sendSignupOTP = async ({ otp, email }) => {
   try {
-    console.log(otp);
-    console.log(email);
+    logger.info({ otp, email });
   } catch (err) {
     logger.error(err);
   }
