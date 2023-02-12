@@ -1,8 +1,6 @@
-const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
-
 const asyncHandler = require('../asyncHandler');
 const AppError = require('../../utils/appError');
+const { decode } = require('../../utils/auth');
 
 const protect = (model) =>
   asyncHandler(async (req, res, next) => {
@@ -18,17 +16,10 @@ const protect = (model) =>
       return next(new AppError('Unauthorized', 401));
     }
 
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const { user } = decode(token, model);
+    req.user = user;
 
-    const currentUser = await model.findById(decoded.id);
-    if (currentUser != null) {
-      req.user = currentUser;
-      return next();
-    }
-
-    return next(
-      new AppError('User belonging to this token does not exists', 401)
-    );
+    return next();
   });
 
 module.exports = protect;

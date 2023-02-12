@@ -25,11 +25,7 @@ router.post(
   authController.validateSignupEmail
 );
 
-router.post(
-  '/validate-token',
-  validate(authSchema.validateToken),
-  authController.validateToken
-);
+router.post('/validate-token', authController.validateToken);
 
 router.post(
   '/forget-password',

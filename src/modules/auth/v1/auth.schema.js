@@ -39,15 +39,6 @@ exports.validateSignupEmail = joi
   })
   .unknown(true);
 
-exports.validateToken = joi
-  .object({
-    body: joi.object().keys({
-      email: joi.string().required(),
-      password: joi.string().required(),
-    }),
-  })
-  .unknown(true);
-
 exports.forgetPassword = joi
   .object({
     body: joi.object().keys({

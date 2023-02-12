@@ -46,7 +46,7 @@ exports.validateToken = asyncHandler(async (req, res, next) => {
   }
 
   if (!token) {
-    return next(new AppError('Unable to parse authentication token'));
+    return next(new AppError('Unable to parse authentication token', 400));
   }
 
   const data = await authService.validateToken({

@@ -8,6 +8,7 @@ const {
 } = require('./auth.util');
 const { Entity } = require('../../../models');
 const AppError = require('../../../utils/appError');
+const { decode } = require('../../../utils/auth');
 
 exports.login = async ({ email, password }) => {
   const user = await Entity.findOne({ email }).select('+password');
@@ -138,8 +139,9 @@ exports.validateSignupEmail = async ({ email, sessionId, otp, password }) => {
   };
 };
 
-exports.validateToken = async ({ email }) => {
-  logger.info(email);
+exports.validateToken = async ({ token }) => {
+  const { user } = await decode(token, Entity);
+  return user;
 };
 
 exports.forgetPassword = async ({ email }) => {
