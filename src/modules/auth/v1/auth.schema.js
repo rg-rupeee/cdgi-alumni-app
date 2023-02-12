@@ -28,7 +28,7 @@ exports.resendOTP = joi
   })
   .unknown(true);
 
-exports.validateSignupEmail = joi
+exports.setPassword = joi
   .object({
     body: joi.object().keys({
       email: joi.string().required(),
@@ -39,20 +39,10 @@ exports.validateSignupEmail = joi
   })
   .unknown(true);
 
-exports.forgetPassword = joi
-  .object({
-    body: joi.object().keys({
-      email: joi.string().required(),
-    }),
-  })
-  .unknown(true);
-
 exports.resetPassword = joi
   .object({
     body: joi.object().keys({
       email: joi.string().required(),
-      password: joi.string().required(),
-      sessionId: joi.string().required(),
     }),
   })
   .unknown(true);

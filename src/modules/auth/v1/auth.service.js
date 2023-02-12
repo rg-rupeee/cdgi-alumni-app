@@ -100,17 +100,13 @@ exports.resendOTP = async ({ email, sessionId }) => {
   };
 };
 
-exports.validateSignupEmail = async ({ email, sessionId, otp, password }) => {
+exports.setPassword = async ({ email, sessionId, otp, password }) => {
   let user = await Entity.findOne({ email, sessionId });
   if (!user) {
     throw new AppError('Invalid sessionId or User Not Found', 400);
   }
 
-  if (user.active) {
-    throw new AppError('User Already Exists', 400);
-  }
-
-  // check if session date is greater than 1 day
+  // check if session date is greater than 1 hour
   const today = new Date();
   const sessionInitiate = new Date(user.sessioInitiate);
   if (getHourDifference(today.getTime(), sessionInitiate.getTime()) > 1) {
@@ -144,10 +140,31 @@ exports.validateToken = async ({ token }) => {
   return user;
 };
 
-exports.forgetPassword = async ({ email }) => {
-  logger.info(email);
-};
-
 exports.resetPassword = async ({ email }) => {
-  logger.info(email);
+  let user = await Entity.findOne({ email });
+  if (!user || !user.active) {
+    throw new AppError('User Not Found', 400);
+  }
+
+  const otp = generateOTP();
+  user = await Entity.findOneAndUpdate(
+    { email },
+    {
+      sessionId: uuidv4(),
+      sessioInitiate: Date.now(),
+      sessionOTP: otp,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  await sendSignupOTP({ email, name: user.name, otp });
+
+  return {
+    id: user._id,
+    email: user.email,
+    sessionId: user.sessionId,
+  };
 };

@@ -7,32 +7,41 @@ const router = express.Router();
 
 router.post('/login', validate(authSchema.login), authController.login);
 
+/**
+ * [A] Signup -> Initiate's Signup
+ */
 router.post(
-  '/signup/initiate',
+  '/initiate-signup',
   validate(authSchema.initiateSignup),
   authController.initiateSignup
 );
 
+/**
+ * Resend OTP -> Signup, Forget Password
+ */
 router.post(
-  '/signup/resend-otp',
+  '/resend-otp',
   validate(authSchema.resendOTP),
   authController.resendOTP
 );
 
+/**
+ * [B] Set Password -> Signup, Forget Password
+ */
 router.post(
-  '/signup/validate',
-  validate(authSchema.validateSignupEmail),
-  authController.validateSignupEmail
+  '/set-password',
+  validate(authSchema.setPassword),
+  authController.setPassword
 );
 
+/**
+ * Validate Auth Token
+ */
 router.post('/validate-token', authController.validateToken);
 
-router.post(
-  '/forget-password',
-  validate(authSchema.forgetPassword),
-  authController.forgetPassword
-);
-
+/**
+ * [A] Reset Password -> Forget Password
+ */
 router.post(
   '/reset-password',
   validate(authSchema.resetPassword),
