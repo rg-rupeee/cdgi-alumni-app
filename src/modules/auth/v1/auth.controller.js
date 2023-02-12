@@ -12,8 +12,8 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 exports.initiateSignup = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
-  const data = await authService.initiateSignup({ email });
+  const { email, name } = req.body;
+  const data = await authService.initiateSignup({ email, name });
   return responses.OK(res, data);
 });
 

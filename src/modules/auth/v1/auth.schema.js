@@ -14,6 +14,7 @@ exports.initiateSignup = joi
   .object({
     body: joi.object().keys({
       email: joi.string().required(),
+      name: joi.string().required(),
     }),
   })
   .unknown(true);

@@ -27,7 +27,7 @@ exports.login = async ({ email, password }) => {
   };
 };
 
-exports.initiateSignup = async ({ email }) => {
+exports.initiateSignup = async ({ email, name }) => {
   let user = await Entity.findOne({ email });
   if (user?.active) {
     throw new AppError('User Already Exists', 400);
@@ -38,6 +38,7 @@ exports.initiateSignup = async ({ email }) => {
     ? await Entity.findOneAndUpdate(
         { email },
         {
+          name,
           sessionId: uuidv4(),
           sessioInitiate: Date.now(),
           sessionOTP: otp,
@@ -49,12 +50,13 @@ exports.initiateSignup = async ({ email }) => {
       )
     : await Entity.create({
         email,
+        name,
         sessionId: uuidv4(),
         sessioInitiate: Date.now(),
         sessionOTP: otp,
       });
 
-  sendSignupOTP({ email, otp });
+  await sendSignupOTP({ email, name, otp });
 
   return {
     id: user._id,
@@ -73,9 +75,15 @@ exports.resendOTP = async ({ email, sessionId }) => {
     throw new AppError('OPT Resend ATTEMPT EXCEED', 400);
   }
 
+  const today = new Date();
+  const sessionInitiate = new Date(user.sessioInitiate);
+  if (getHourDifference(today.getTime(), sessionInitiate.getTime()) > 1) {
+    throw new AppError('Session Id Expired', 400);
+  }
+
   const otp = user.sessionOTP;
 
-  sendSignupOTP({ email, otp });
+  await sendSignupOTP({ email, otp, name: user.name });
 
   await Entity.findOneAndUpdate(
     { email },
@@ -86,6 +94,7 @@ exports.resendOTP = async ({ email, sessionId }) => {
   return {
     id: user._id,
     email: user.email,
+    name: user.name,
     sessionId: user.sessionId,
   };
 };
@@ -103,8 +112,7 @@ exports.validateSignupEmail = async ({ email, sessionId, otp, password }) => {
   // check if session date is greater than 1 day
   const today = new Date();
   const sessionInitiate = new Date(user.sessioInitiate);
-
-  if (getHourDifference(today.getTime(), sessionInitiate.getTime()) > 6) {
+  if (getHourDifference(today.getTime(), sessionInitiate.getTime()) > 1) {
     throw new AppError('Session Id Expired', 400);
   }
 

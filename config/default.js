@@ -16,6 +16,16 @@ const config = {
     SECRET: process.env.JWT_SECRET,
     EXPIRY: process.env.JWT_EXPIRY,
   },
+  EMAIL: {
+    SENDER: {
+      NAME: process.env.EMAIL_SENDER_NAME,
+      EMAILID: process.env.EMAIL_SENDER_EMAILID,
+    },
+    SENDINBLUE: {
+      URI: process.env.SENDINBLUE_API_URI,
+      API_KEY: process.env.SENDINBLUE_API_KEY,
+    },
+  },
 };
 
 module.exports = config;
