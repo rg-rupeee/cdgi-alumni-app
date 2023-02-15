@@ -1,14 +1,15 @@
-const { v4: uuidv4 } = require('uuid');
-const logger = require('../../../configs/logger');
 const {
   generateToken,
   generateOTP,
   getHourDifference,
   sendSignupOTP,
+  encryptOTP,
+  decryptOTP,
 } = require('./auth.util');
 const { Entity } = require('../../../models');
 const AppError = require('../../../utils/appError');
 const { decode } = require('../../../utils/auth');
+const { generateUUID } = require('../../../utils/crypto');
 
 exports.login = async ({ email, password }) => {
   const user = await Entity.findOne({ email }).select('+password');
@@ -35,14 +36,15 @@ exports.initiateSignup = async ({ email, name }) => {
   }
 
   const otp = generateOTP();
+  const hashedOtp = encryptOTP(otp);
   user = user
     ? await Entity.findOneAndUpdate(
         { email },
         {
           name,
-          sessionId: uuidv4(),
+          sessionId: generateUUID(),
           sessioInitiate: Date.now(),
-          sessionOTP: otp,
+          sessionOTP: hashedOtp,
         },
         {
           new: true,
@@ -52,9 +54,9 @@ exports.initiateSignup = async ({ email, name }) => {
     : await Entity.create({
         email,
         name,
-        sessionId: uuidv4(),
+        sessionId: generateUUID(),
         sessioInitiate: Date.now(),
-        sessionOTP: otp,
+        sessionOTP: hashedOtp,
       });
 
   await sendSignupOTP({ email, name, otp });
@@ -82,7 +84,7 @@ exports.resendOTP = async ({ email, sessionId }) => {
     throw new AppError('Session Id Expired', 400);
   }
 
-  const otp = user.sessionOTP;
+  const otp = decryptOTP(user.sessionOTP);
 
   await sendSignupOTP({ email, otp, name: user.name });
 
@@ -114,7 +116,7 @@ exports.setPassword = async ({ email, sessionId, otp, password }) => {
   }
 
   // validate session otp
-  if (user.sessionOTP !== otp) {
+  if (user.sessionOTP !== encryptOTP(otp)) {
     throw new AppError('Invalid OTP Entered', 400);
   }
 
@@ -147,12 +149,13 @@ exports.resetPassword = async ({ email }) => {
   }
 
   const otp = generateOTP();
+  const hashedOtp = encryptOTP(otp);
   user = await Entity.findOneAndUpdate(
     { email },
     {
-      sessionId: uuidv4(),
+      sessionId: generateUUID(),
       sessioInitiate: Date.now(),
-      sessionOTP: otp,
+      sessionOTP: hashedOtp,
     },
     {
       new: true,

@@ -9,7 +9,7 @@
     "prepare": "husky install",
     "postinstall": "husky install",
     "lint": "eslint .",
-    "format:fix": "eslint . --fix"
+    "format": "eslint . --fix"
   },
   "keywords": [
     "alumni",

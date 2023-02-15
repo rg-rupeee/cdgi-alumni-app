@@ -1,18 +1,18 @@
 const express = require('express');
 const validate = require('../../../middlewares/validation.middleware');
 const authController = require('./auth.controller');
-const authSchema = require('./auth.schema');
+const authDTO = require('./auth.dto');
 
 const router = express.Router();
 
-router.post('/login', validate(authSchema.login), authController.login);
+router.post('/login', validate(authDTO.login), authController.login);
 
 /**
  * [A] Signup -> Initiate's Signup
  */
 router.post(
   '/initiate-signup',
-  validate(authSchema.initiateSignup),
+  validate(authDTO.initiateSignup),
   authController.initiateSignup
 );
 
@@ -21,7 +21,7 @@ router.post(
  */
 router.post(
   '/resend-otp',
-  validate(authSchema.resendOTP),
+  validate(authDTO.resendOTP),
   authController.resendOTP
 );
 
@@ -30,7 +30,7 @@ router.post(
  */
 router.post(
   '/set-password',
-  validate(authSchema.setPassword),
+  validate(authDTO.setPassword),
   authController.setPassword
 );
 
@@ -44,7 +44,7 @@ router.post('/validate-token', authController.validateToken);
  */
 router.post(
   '/reset-password',
-  validate(authSchema.resetPassword),
+  validate(authDTO.resetPassword),
   authController.resetPassword
 );
 

@@ -3,6 +3,7 @@ const config = require('config');
 const constants = require('../../../constants');
 const { sendMail } = require('../../../utils/email');
 const AppError = require('../../../utils/appError');
+const { encrypt, decrypt } = require('../../../utils/crypto');
 
 exports.generateToken = (id) => {
   const token = jwt.sign({ id }, config.JWT.SECRET, {
@@ -28,4 +29,14 @@ exports.sendSignupOTP = async ({ otp, email, name }) => {
     throw new AppError(`Could not send otp. Error: ${res.response}`, 400);
 
   return res;
+};
+
+exports.encryptOTP = (otp) => {
+  const { iv, encrypted } = encrypt(otp);
+  return iv.concat('.', encrypted);
+};
+
+exports.decryptOTP = (text) => {
+  const [initVector, encryptedData] = text.split('.');
+  return decrypt({ initVector, encryptedData });
 };
