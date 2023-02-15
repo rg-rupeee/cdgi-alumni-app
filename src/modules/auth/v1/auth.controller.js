@@ -12,8 +12,8 @@ exports.login = asyncHandler(async (req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 exports.initiateSignup = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
-  const data = await authService.initiateSignup({ email });
+  const { email, name } = req.body;
+  const data = await authService.initiateSignup({ email, name });
   return responses.OK(res, data);
 });
 
@@ -25,9 +25,9 @@ exports.resendOTP = asyncHandler(async (req, res, next) => {
 });
 
 // eslint-disable-next-line no-unused-vars
-exports.validateSignupEmail = asyncHandler(async (req, res, next) => {
+exports.setPassword = asyncHandler(async (req, res, next) => {
   const { email, sessionId, otp, password } = req.body;
-  const data = await authService.validateSignupEmail({
+  const data = await authService.setPassword({
     email,
     sessionId,
     otp,
@@ -46,7 +46,7 @@ exports.validateToken = asyncHandler(async (req, res, next) => {
   }
 
   if (!token) {
-    return next(new AppError('Unable to parse authentication token'));
+    return next(new AppError('Unable to parse authentication token', 400));
   }
 
   const data = await authService.validateToken({
@@ -56,15 +56,8 @@ exports.validateToken = asyncHandler(async (req, res, next) => {
 });
 
 // eslint-disable-next-line no-unused-vars
-exports.forgetPassword = asyncHandler(async (req, res, next) => {
-  const { email } = req.body;
-  const data = await authService.forgetPassword({ email });
-  return responses.OK(res, data);
-});
-
-// eslint-disable-next-line no-unused-vars
 exports.resetPassword = asyncHandler(async (req, res, next) => {
-  const { email, sessionId, password } = req.body;
-  const data = await authService.resetPassword({ email, sessionId, password });
+  const { email } = req.body;
+  const data = await authService.resetPassword({ email });
   return responses.OK(res, data);
 });

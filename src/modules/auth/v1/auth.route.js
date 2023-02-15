@@ -1,45 +1,50 @@
 const express = require('express');
 const validate = require('../../../middlewares/validation.middleware');
 const authController = require('./auth.controller');
-const authSchema = require('./auth.schema');
+const authDTO = require('./auth.dto');
 
 const router = express.Router();
 
-router.post('/login', validate(authSchema.login), authController.login);
+router.post('/login', validate(authDTO.login), authController.login);
 
+/**
+ * [A] Signup -> Initiate's Signup
+ */
 router.post(
-  '/signup/initiate',
-  validate(authSchema.initiateSignup),
+  '/initiate-signup',
+  validate(authDTO.initiateSignup),
   authController.initiateSignup
 );
 
+/**
+ * Resend OTP -> Signup, Forget Password
+ */
 router.post(
-  '/signup/resend-otp',
-  validate(authSchema.resendOTP),
+  '/resend-otp',
+  validate(authDTO.resendOTP),
   authController.resendOTP
 );
 
+/**
+ * [B] Set Password -> Signup, Forget Password
+ */
 router.post(
-  '/signup/validate',
-  validate(authSchema.validateSignupEmail),
-  authController.validateSignupEmail
+  '/set-password',
+  validate(authDTO.setPassword),
+  authController.setPassword
 );
 
-router.post(
-  '/validate-token',
-  validate(authSchema.validateToken),
-  authController.validateToken
-);
+/**
+ * Validate Auth Token
+ */
+router.post('/validate-token', authController.validateToken);
 
-router.post(
-  '/forget-password',
-  validate(authSchema.forgetPassword),
-  authController.forgetPassword
-);
-
+/**
+ * [A] Reset Password -> Forget Password
+ */
 router.post(
   '/reset-password',
-  validate(authSchema.resetPassword),
+  validate(authDTO.resetPassword),
   authController.resetPassword
 );
 

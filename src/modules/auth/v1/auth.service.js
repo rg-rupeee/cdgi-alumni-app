@@ -1,13 +1,15 @@
-const { v4: uuidv4 } = require('uuid');
-const logger = require('../../../configs/logger');
 const {
   generateToken,
   generateOTP,
   getHourDifference,
   sendSignupOTP,
+  encryptOTP,
+  decryptOTP,
 } = require('./auth.util');
 const { Entity } = require('../../../models');
 const AppError = require('../../../utils/appError');
+const { decode } = require('../../../utils/auth');
+const { generateUUID } = require('../../../utils/crypto');
 
 exports.login = async ({ email, password }) => {
   const user = await Entity.findOne({ email }).select('+password');
@@ -27,20 +29,22 @@ exports.login = async ({ email, password }) => {
   };
 };
 
-exports.initiateSignup = async ({ email }) => {
+exports.initiateSignup = async ({ email, name }) => {
   let user = await Entity.findOne({ email });
   if (user?.active) {
     throw new AppError('User Already Exists', 400);
   }
 
   const otp = generateOTP();
+  const hashedOtp = encryptOTP(otp);
   user = user
     ? await Entity.findOneAndUpdate(
         { email },
         {
-          sessionId: uuidv4(),
+          name,
+          sessionId: generateUUID(),
           sessioInitiate: Date.now(),
-          sessionOTP: otp,
+          sessionOTP: hashedOtp,
         },
         {
           new: true,
@@ -49,12 +53,13 @@ exports.initiateSignup = async ({ email }) => {
       )
     : await Entity.create({
         email,
-        sessionId: uuidv4(),
+        name,
+        sessionId: generateUUID(),
         sessioInitiate: Date.now(),
-        sessionOTP: otp,
+        sessionOTP: hashedOtp,
       });
 
-  sendSignupOTP({ email, otp });
+  await sendSignupOTP({ email, name, otp });
 
   return {
     id: user._id,
@@ -73,9 +78,15 @@ exports.resendOTP = async ({ email, sessionId }) => {
     throw new AppError('OPT Resend ATTEMPT EXCEED', 400);
   }
 
-  const otp = user.sessionOTP;
+  const today = new Date();
+  const sessionInitiate = new Date(user.sessioInitiate);
+  if (getHourDifference(today.getTime(), sessionInitiate.getTime()) > 1) {
+    throw new AppError('Session Id Expired', 400);
+  }
 
-  sendSignupOTP({ email, otp });
+  const otp = decryptOTP(user.sessionOTP);
+
+  await sendSignupOTP({ email, otp, name: user.name });
 
   await Entity.findOneAndUpdate(
     { email },
@@ -86,30 +97,26 @@ exports.resendOTP = async ({ email, sessionId }) => {
   return {
     id: user._id,
     email: user.email,
+    name: user.name,
     sessionId: user.sessionId,
   };
 };
 
-exports.validateSignupEmail = async ({ email, sessionId, otp, password }) => {
+exports.setPassword = async ({ email, sessionId, otp, password }) => {
   let user = await Entity.findOne({ email, sessionId });
   if (!user) {
     throw new AppError('Invalid sessionId or User Not Found', 400);
   }
 
-  if (user.active) {
-    throw new AppError('User Already Exists', 400);
-  }
-
-  // check if session date is greater than 1 day
+  // check if session date is greater than 1 hour
   const today = new Date();
   const sessionInitiate = new Date(user.sessioInitiate);
-
-  if (getHourDifference(today.getTime(), sessionInitiate.getTime()) > 6) {
+  if (getHourDifference(today.getTime(), sessionInitiate.getTime()) > 1) {
     throw new AppError('Session Id Expired', 400);
   }
 
   // validate session otp
-  if (user.sessionOTP !== otp) {
+  if (user.sessionOTP !== encryptOTP(otp)) {
     throw new AppError('Invalid OTP Entered', 400);
   }
 
@@ -130,14 +137,37 @@ exports.validateSignupEmail = async ({ email, sessionId, otp, password }) => {
   };
 };
 
-exports.validateToken = async ({ email }) => {
-  logger.info(email);
-};
-
-exports.forgetPassword = async ({ email }) => {
-  logger.info(email);
+exports.validateToken = async ({ token }) => {
+  const { user } = await decode(token, Entity);
+  return user;
 };
 
 exports.resetPassword = async ({ email }) => {
-  logger.info(email);
+  let user = await Entity.findOne({ email });
+  if (!user || !user.active) {
+    throw new AppError('User Not Found', 400);
+  }
+
+  const otp = generateOTP();
+  const hashedOtp = encryptOTP(otp);
+  user = await Entity.findOneAndUpdate(
+    { email },
+    {
+      sessionId: generateUUID(),
+      sessioInitiate: Date.now(),
+      sessionOTP: hashedOtp,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  await sendSignupOTP({ email, name: user.name, otp });
+
+  return {
+    id: user._id,
+    email: user.email,
+    sessionId: user.sessionId,
+  };
 };
