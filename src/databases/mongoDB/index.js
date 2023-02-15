@@ -2,7 +2,7 @@ const config = require('config');
 const mongoose = require('mongoose');
 const logger = require('../../configs/logger');
 
-mongoose.set('strictQuery', false);
+mongoose.set('strictQuery', true);
 
 mongoose.connection.on('disconnected', () => {
   logger.info('MongoDB: Disconnected');
