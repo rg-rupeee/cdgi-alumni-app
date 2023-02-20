@@ -3,10 +3,14 @@ joi.objectId = require('joi-objectid')(joi);
 
 exports.login = joi
   .object({
-    body: joi.object().keys({
-      email: joi.string().required(),
-      password: joi.string().required(),
-    }),
+    body: joi
+      .object()
+      .keys({
+        email: joi.string(),
+        enrollmentId: joi.string(),
+        password: joi.string().required(),
+      })
+      .xor('email', 'enrollmentId'),
   })
   .unknown(true);
 
@@ -14,6 +18,7 @@ exports.initiateSignup = joi
   .object({
     body: joi.object().keys({
       email: joi.string().required(),
+      enrollmentId: joi.string().required(),
       name: joi.string().required(),
     }),
   })

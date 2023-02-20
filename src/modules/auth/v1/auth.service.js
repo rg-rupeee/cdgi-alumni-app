@@ -11,8 +11,11 @@ const AppError = require('../../../utils/appError');
 const { decode } = require('../../../utils/auth');
 const { generateUUID } = require('../../../utils/crypto');
 
-exports.login = async ({ email, password }) => {
-  const user = await Entity.findOne({ email }).select('+password');
+exports.login = async ({ email, enrollmentId, password }) => {
+  const user = await Entity.findOne({
+    $or: [{ email }, { enrollmentId }],
+  }).select('+password');
+
   if (!user || !user.active) {
     throw new AppError('User Not Found', 400);
   }
@@ -23,14 +26,15 @@ exports.login = async ({ email, password }) => {
   return {
     user: {
       _id: user._id,
-      emaiL: user.email,
+      email: user.email,
+      enrollmentId: user.enrollmentId,
     },
     token,
   };
 };
 
-exports.initiateSignup = async ({ email, name }) => {
-  let user = await Entity.findOne({ email });
+exports.initiateSignup = async ({ email, enrollmentId, name }) => {
+  let user = await Entity.findOne({ email, enrollmentId });
   if (user?.active) {
     throw new AppError('User Already Exists', 400);
   }
@@ -39,7 +43,7 @@ exports.initiateSignup = async ({ email, name }) => {
   const hashedOtp = encryptOTP(otp);
   user = user
     ? await Entity.findOneAndUpdate(
-        { email },
+        { email, enrollmentId },
         {
           name,
           sessionId: generateUUID(),
@@ -53,6 +57,7 @@ exports.initiateSignup = async ({ email, name }) => {
       )
     : await Entity.create({
         email,
+        enrollmentId,
         name,
         sessionId: generateUUID(),
         sessioInitiate: Date.now(),
@@ -65,6 +70,7 @@ exports.initiateSignup = async ({ email, name }) => {
     id: user._id,
     email: user.email,
     sessionId: user.sessionId,
+    enrollmentId: user.enrollmentId,
   };
 };
 

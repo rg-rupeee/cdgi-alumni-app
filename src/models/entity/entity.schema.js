@@ -15,6 +15,11 @@ const entitySchema = new mongoose.Schema(
       unique: true,
       validate: [isEmail, 'invalid value: email'],
     },
+    enrollmentId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     password: {
       type: String,
       select: false,
@@ -39,6 +44,7 @@ const entitySchema = new mongoose.Schema(
 );
 
 entitySchema.index({ email: 1 });
+entitySchema.index({ enrollmentId: 1 });
 
 entitySchema.pre('save', async function (next) {
   // If password is not modified return

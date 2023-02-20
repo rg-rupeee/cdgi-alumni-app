@@ -5,15 +5,15 @@ const AppError = require('../../../utils/appError');
 
 // eslint-disable-next-line no-unused-vars
 exports.login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
-  const data = await authService.login({ email, password });
+  const { email, enrollmentId, password } = req.body;
+  const data = await authService.login({ email, enrollmentId, password });
   return responses.OK(res, data);
 });
 
 // eslint-disable-next-line no-unused-vars
 exports.initiateSignup = asyncHandler(async (req, res, next) => {
-  const { email, name } = req.body;
-  const data = await authService.initiateSignup({ email, name });
+  const { email, enrollmentId, name } = req.body;
+  const data = await authService.initiateSignup({ email, enrollmentId, name });
   return responses.OK(res, data);
 });
 
