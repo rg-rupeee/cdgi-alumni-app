@@ -1,6 +1,6 @@
 const asyncHandler = require('../../middlewares/asyncHandler');
-const AppError = require('../appError');
-const APIFeatures = require('../apiFeatures');
+const AppError = require('../../commons/appError');
+const APIFeatures = require('../../commons/appError');
 const responses = require('../responses');
 
 exports.deleteOne = (Model, entity = 'document') =>

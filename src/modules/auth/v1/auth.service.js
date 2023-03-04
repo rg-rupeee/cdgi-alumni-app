@@ -7,7 +7,7 @@ const {
   decryptOTP,
 } = require('./auth.util');
 const { Entity } = require('../../../models');
-const AppError = require('../../../utils/appError');
+const AppError = require('../../../commons/appError');
 const { decode } = require('../../../utils/auth');
 const { generateUUID } = require('../../../utils/crypto');
 

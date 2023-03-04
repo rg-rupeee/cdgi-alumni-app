@@ -1,7 +1,7 @@
 const asyncHandler = require('../../../middlewares/asyncHandler');
 const authService = require('./auth.service');
 const responses = require('../../../utils/responses');
-const AppError = require('../../../utils/appError');
+const AppError = require('../../../commons/appError');
 
 // eslint-disable-next-line no-unused-vars
 exports.login = asyncHandler(async (req, res, next) => {

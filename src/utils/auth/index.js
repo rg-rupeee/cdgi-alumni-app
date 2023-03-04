@@ -1,13 +1,13 @@
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 
-const AppError = require('../appError');
+const AppError = require('../../commons/appError');
 
 exports.decode = async (token, model) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   const currentUser = await model.findById(decoded.id);
-  if (currentUser != null) {
+  if (currentUser) {
     return { valid: true, user: currentUser };
   }
 

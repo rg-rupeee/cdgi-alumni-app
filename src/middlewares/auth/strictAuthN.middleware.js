@@ -1,5 +1,5 @@
 const asyncHandler = require('../asyncHandler');
-const AppError = require('../../utils/appError');
+const AppError = require('../../commons/appError');
 const { decode } = require('../../utils/auth');
 
 const protect = (model) =>
@@ -16,7 +16,8 @@ const protect = (model) =>
       return next(new AppError('Unauthorized', 401));
     }
 
-    const { user } = decode(token, model);
+    const { user } = await decode(token, model);
+
     req.user = user;
 
     return next();
