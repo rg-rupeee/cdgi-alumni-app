@@ -23,11 +23,11 @@ async function bootstrap() {
 
   // handling unhandled rejection
   process.on('unhandledRejection', (err) => {
-    logger.info('UNHANDLED REJECTION! Shutting down...');
+    logger.info('UNHANDLED REJECTION!');
     logger.error(err);
-    server.close(() => {
-      process.exit(1);
-    });
+    // server.close(() => {
+    //   process.exit(1);
+    // });
   });
 
   // handling sigterm

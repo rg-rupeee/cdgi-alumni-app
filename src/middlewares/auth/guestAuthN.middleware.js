@@ -16,7 +16,7 @@ const protect = (model) =>
       return next();
     }
 
-    const { user } = decode(token, model);
+    const { user } = await decode(token, model);
     req.user = user;
 
     return next();

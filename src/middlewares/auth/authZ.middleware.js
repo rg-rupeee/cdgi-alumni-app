@@ -1,4 +1,4 @@
-const AppError = require('../../utils/appError');
+const AppError = require('../../commons/appError');
 
 const restrict =
   (...roles) =>

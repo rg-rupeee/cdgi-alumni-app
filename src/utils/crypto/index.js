@@ -1,5 +1,5 @@
 const crypto = require('node:crypto');
-const constants = require('../../constants');
+const constants = require('../../commons/constants');
 
 const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
