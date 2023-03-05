@@ -1,6 +1,7 @@
 const { Post, Comment, Like, CommentLike } = require('../../../models');
 const APIFeatures = require('../../../commons/apiFeatures');
 const AppError = require('../../../commons/appError');
+const { getFeeddata } = require('./post.util');
 
 exports.createPost = async ({ userId, text, images }) => {
   const post = await Post.create({ user: userId, text, images });
@@ -17,7 +18,14 @@ exports.getAllPosts = async (query) => {
 exports.getUserFeed = async (query) => {
   const findPosts = new APIFeatures(Post.find(), query).all();
   const posts = await findPosts.query;
-  return { posts };
+
+  const res = [];
+  posts.forEach((post) => {
+    res.push(getFeeddata(post));
+  });
+  const feedData = await Promise.all(res);
+
+  return { posts: feedData };
 };
 
 exports.getPost = async (postId) => {
