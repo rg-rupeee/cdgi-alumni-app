@@ -74,8 +74,9 @@ exports.addComment = asyncHandler(async (req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 exports.getPostComments = asyncHandler(async (req, res, next) => {
+  const { query } = req;
   const { postId } = req.params;
-  const data = await postService.getPostComments(postId);
+  const data = await postService.getPostComments(postId, query);
   return responses.OK(res, data);
 });
 

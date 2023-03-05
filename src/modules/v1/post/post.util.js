@@ -1,4 +1,4 @@
-const { Comment, Like } = require('../../../models');
+const { Comment, Like, CommentLike } = require('../../../models');
 
 exports.getFeeddata = async (post) => {
   const likes = await Like.countDocuments({ post: post._id });
@@ -10,6 +10,16 @@ exports.getFeeddata = async (post) => {
     },
     comment: {
       count: comments?.comments?.length,
+    },
+  };
+};
+
+exports.getCommentsData = async (comment) => {
+  const likes = await CommentLike.countDocuments({ comment: comment._id });
+  return {
+    ...comment.toJSON(),
+    like: {
+      count: likes,
     },
   };
 };

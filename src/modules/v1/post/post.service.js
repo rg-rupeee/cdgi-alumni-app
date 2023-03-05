@@ -1,7 +1,7 @@
 const { Post, Comment, Like, CommentLike } = require('../../../models');
 const APIFeatures = require('../../../commons/apiFeatures');
 const AppError = require('../../../commons/appError');
-const { getFeeddata } = require('./post.util');
+const { getFeeddata, getCommentsData } = require('./post.util');
 
 exports.createPost = async ({ userId, text, images }) => {
   const post = await Post.create({ user: userId, text, images });
@@ -120,11 +120,23 @@ exports.deleteComment = async ({ postId, commentId, userId }) => {
   return { commentId };
 };
 
-exports.getPostComments = async (postId) => {
-  // TODO: paginate the comments using slice : array<comment>
-  // TODO: get likes on comments as well
-  const comments = await Comment.findOne({ post: postId });
-  return { comments };
+exports.getPostComments = async (postId, query) => {
+  const page = query.page * 1 || 1;
+  const limit = query.limit * 1 || 20;
+  const skip = (page - 1) * limit;
+  const comments = await Comment.findOne(
+    { post: postId },
+    { comments: { $slice: [skip, limit] } }
+  );
+
+  const res = [];
+  comments.comments.forEach((comment) => {
+    res.push(getCommentsData(comment));
+  });
+
+  const commentsData = await Promise.all(res);
+
+  return { comments: commentsData };
 };
 
 exports.likeComment = async ({ postId, commentId, userId }) => {
