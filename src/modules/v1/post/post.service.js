@@ -30,7 +30,12 @@ exports.getUserFeed = async (query) => {
 
 exports.getPost = async (postId) => {
   const post = await Post.findOne({ _id: postId });
-  return { post };
+
+  if (!post) throw new AppError('Post not found!', 404);
+
+  const feedData = await getFeeddata(post);
+
+  return { post: feedData };
 };
 
 exports.deletePost = async (userId, postId) => {
@@ -56,7 +61,11 @@ exports.likePost = async (userId, postId) => {
       throw err;
     }
   }
+  return { postId };
+};
 
+exports.removePostLike = async (userId, postId) => {
+  await Like.findOneAndDelete({ entity: userId, post: postId });
   return { postId };
 };
 
@@ -67,16 +76,6 @@ exports.getPostLikes = async (postId, query) => {
   ).paginate();
   const likes = await findLikes.query;
   return { likes };
-};
-
-exports.removePostLike = async (userId, postId) => {
-  const post = await Post.findOne({ _id: postId, userId });
-
-  if (!post) throw new AppError('Post not found!', 404);
-
-  await Like.findOneAndDelete({ entity: userId, post: postId });
-
-  return { postId };
 };
 
 exports.addComment = async ({ userId, postId, text }) => {
@@ -100,15 +99,6 @@ exports.addComment = async ({ userId, postId, text }) => {
   return { comments: updatedComments };
 };
 
-exports.getPostComments = async (postId, query) => {
-  const findComments = new APIFeatures(
-    Comment.findOne({ post: postId }),
-    query
-  ).paginate();
-  const comments = await findComments.query;
-  return { comments };
-};
-
 exports.deleteComment = async ({ postId, commentId, userId }) => {
   const comments = await Comment.findOne({ postId });
 
@@ -128,6 +118,13 @@ exports.deleteComment = async ({ postId, commentId, userId }) => {
   );
 
   return { commentId };
+};
+
+exports.getPostComments = async (postId) => {
+  // TODO: paginate the comments using slice : array<comment>
+  // TODO: get likes on comments as well
+  const comments = await Comment.findOne({ post: postId });
+  return { comments };
 };
 
 exports.likeComment = async ({ postId, commentId, userId }) => {
@@ -150,17 +147,8 @@ exports.likeComment = async ({ postId, commentId, userId }) => {
   return { commentId };
 };
 
-exports.removeCommentLike = async ({ postId, commentId, userId }) => {
-  const comments = await Comment.findOne({ postId });
-
-  if (!comments) throw new AppError('Post not found!', 404);
-
-  const comment = comments.comments.find((each) => each._id.equals(commentId));
-
-  if (!comment) throw new AppError('Comment Not found!', 404);
-
+exports.removeCommentLike = async ({ commentId, userId }) => {
   await CommentLike.findOneAndDelete({ entity: userId, comment: commentId });
-
   return { commentId };
 };
 
