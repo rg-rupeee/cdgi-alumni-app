@@ -24,7 +24,7 @@ exports.login = async ({ email, enrollmentId, password }) => {
   }
   const token = generateToken(user.id);
   return {
-    user: {
+    entity: {
       _id: user._id,
       email: user.email,
       enrollmentId: user.enrollmentId,
@@ -135,7 +135,7 @@ exports.setPassword = async ({ email, sessionId, otp, password }) => {
 
   const token = generateToken(user.id);
   return {
-    user: {
+    entity: {
       _id: user._id,
       emaiL: user.email,
     },

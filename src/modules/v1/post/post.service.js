@@ -1,10 +1,16 @@
-const { Post, Comment, Like, CommentLike } = require('../../../models');
+const {
+  Post,
+  Comment,
+  Like,
+  CommentLike,
+  Bookmark,
+} = require('../../../models');
 const APIFeatures = require('../../../commons/apiFeatures');
 const AppError = require('../../../commons/appError');
-const { getFeeddata, getCommentsData } = require('./post.util');
+const { getPostFeedData, getCommentsData } = require('./post.util');
 
 exports.createPost = async ({ userId, text, images }) => {
-  const post = await Post.create({ user: userId, text, images });
+  const post = await Post.create({ entity: userId, text, images });
   const comments = await Comment.create({ post: post._id, comments: [] });
   return { post, comments };
 };
@@ -15,25 +21,25 @@ exports.getAllPosts = async (query) => {
   return { posts };
 };
 
-exports.getUserFeed = async (query) => {
+exports.getUserFeed = async (query, userId) => {
   const findPosts = new APIFeatures(Post.find(), query).all();
   const posts = await findPosts.query;
 
   const res = [];
   posts.forEach((post) => {
-    res.push(getFeeddata(post));
+    res.push(getPostFeedData(post, userId));
   });
   const feedData = await Promise.all(res);
 
   return { posts: feedData };
 };
 
-exports.getPost = async (postId) => {
+exports.getPost = async (postId, userId) => {
   const post = await Post.findOne({ _id: postId });
 
   if (!post) throw new AppError('Post not found!', 404);
 
-  const feedData = await getFeeddata(post);
+  const feedData = await getPostFeedData(post, userId);
 
   return { post: feedData };
 };
@@ -120,7 +126,7 @@ exports.deleteComment = async ({ postId, commentId, userId }) => {
   return { commentId };
 };
 
-exports.getPostComments = async (postId, query) => {
+exports.getPostComments = async ({ postId, query, userId }) => {
   const page = query.page * 1 || 1;
   const limit = query.limit * 1 || 20;
   const skip = (page - 1) * limit;
@@ -131,7 +137,7 @@ exports.getPostComments = async (postId, query) => {
 
   const res = [];
   comments.comments.forEach((comment) => {
-    res.push(getCommentsData(comment));
+    res.push(getCommentsData(comment, userId));
   });
 
   const commentsData = await Promise.all(res);
@@ -177,4 +183,42 @@ exports.getCommentLikes = async (postId, commentId, query) => {
   ).paginate();
   const likes = await findLikes.query;
   return { likes };
+};
+
+exports.addBookmark = async (postId, userId) => {
+  try {
+    await Bookmark.create({ post: postId, entity: userId });
+  } catch (err) {
+    if (err.code !== 11000) {
+      throw err;
+    }
+  }
+  return { postId };
+};
+
+exports.removeBookmark = async (postId, userId) => {
+  await Bookmark.findOneAndDelete({ entity: userId, post: postId });
+  return { postId };
+};
+
+exports.getBookmarks = async (userId, query) => {
+  const findBookmarks = new APIFeatures(
+    Bookmark.find({ entity: userId }),
+    query
+  ).all();
+  const bookmarks = await findBookmarks.query;
+
+  let posts = [];
+  bookmarks.forEach((bookmark) => {
+    posts.push(Post.findOne({ _id: bookmark.post }));
+  });
+  posts = await Promise.all(posts);
+
+  const res = [];
+  posts.forEach((post) => {
+    res.push(getPostFeedData(post, userId, 'post'));
+  });
+  const feedData = await Promise.all(res);
+
+  return { posts: feedData };
 };

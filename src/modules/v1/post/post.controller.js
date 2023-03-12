@@ -19,15 +19,17 @@ exports.getAllPosts = asyncHandler(async (req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 exports.getUserFeed = asyncHandler(async (req, res, next) => {
+  const { _id: userId } = req.user;
   const { query } = req;
-  const data = await postService.getUserFeed(query);
+  const data = await postService.getUserFeed(query, userId);
   return responses.OK(res, data);
 });
 
 // eslint-disable-next-line no-unused-vars
 exports.getPost = asyncHandler(async (req, res, next) => {
+  const { _id: userId } = req.user;
   const { postId } = req.params;
-  const data = await postService.getPost(postId);
+  const data = await postService.getPost(postId, userId);
   return responses.OK(res, data);
 });
 
@@ -74,9 +76,10 @@ exports.addComment = asyncHandler(async (req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 exports.getPostComments = asyncHandler(async (req, res, next) => {
+  const { _id: userId } = req.user;
   const { query } = req;
   const { postId } = req.params;
-  const data = await postService.getPostComments(postId, query);
+  const data = await postService.getPostComments({ postId, query, userId });
   return responses.OK(res, data);
 });
 
@@ -113,5 +116,29 @@ exports.getCommentLikes = asyncHandler(async (req, res, next) => {
   const { query } = req;
   const { postId, commentId } = req.params;
   const data = await postService.getCommentLikes(postId, commentId, query);
+  return responses.OK(res, data);
+});
+
+// eslint-disable-next-line no-unused-vars
+exports.addBookmark = asyncHandler(async (req, res, next) => {
+  const { _id: userId } = req.user;
+  const { postId } = req.params;
+  const data = await postService.addBookmark(postId, userId);
+  return responses.OK(res, data);
+});
+
+// eslint-disable-next-line no-unused-vars
+exports.removeBookmark = asyncHandler(async (req, res, next) => {
+  const { _id: userId } = req.user;
+  const { postId } = req.params;
+  const data = await postService.removeBookmark(postId, userId);
+  return responses.OK(res, data);
+});
+
+// eslint-disable-next-line no-unused-vars
+exports.getBookmarks = asyncHandler(async (req, res, next) => {
+  const { query } = req;
+  const { _id: userId } = req.user;
+  const data = await postService.getBookmarks(userId, query);
   return responses.OK(res, data);
 });
