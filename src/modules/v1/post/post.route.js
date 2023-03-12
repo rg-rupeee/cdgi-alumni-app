@@ -112,13 +112,26 @@ router.get(
 );
 
 /**
- * Reply Comment
+ * Add Bookmark
  */
-router.patch(
-  '/comment/:commentId',
+router.post(
+  '/:postId/bookmark',
   strictAuthN(Entity),
-  validate(postDTO.createPost),
-  postController.createPost
+  postController.addBookmark
 );
+
+/**
+ * Remove Bookmark
+ */
+router.delete(
+  '/:postId/bookmark',
+  strictAuthN(Entity),
+  postController.removeBookmark
+);
+
+/**
+ * Get All Bookmarks
+ */
+router.get('/user/bookmark', strictAuthN(Entity), postController.getBookmarks);
 
 module.exports = router;
