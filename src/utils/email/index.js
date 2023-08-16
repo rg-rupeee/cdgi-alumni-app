@@ -4,7 +4,13 @@ const logger = require('../../configs/logger');
 
 const url = config.EMAIL.SENDINBLUE.URI;
 
-exports.sendMail = async ({ userName, userEmail, subject, body }) => {
+exports.sendMail = async ({
+  userName,
+  userEmail,
+  subject,
+  body,
+  attachment,
+}) => {
   const data = {
     sender: {
       name: config.EMAIL.SENDER.NAME,
@@ -18,6 +24,7 @@ exports.sendMail = async ({ userName, userEmail, subject, body }) => {
     ],
     subject,
     htmlContent: body,
+    ...(attachment ? { attachment } : {}),
   };
 
   let res;

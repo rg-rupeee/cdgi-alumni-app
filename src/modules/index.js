@@ -5,7 +5,7 @@ const logger = require('../configs/logger');
 
 const router = express.Router();
 
-const specialRoutes = ['auth'];
+const converseRoutes = ['auth', 'dashboard'];
 
 const isDirectory = (folder, source) =>
   fs.lstatSync(path.join(folder, source)).isDirectory();
@@ -21,7 +21,7 @@ const initRoutes = () => {
         .filter((module) => isDirectory(currentFile, module))
         .forEach((module) => {
           const routeFile = `./${file}/${module}/${
-            specialRoutes.includes(file) ? file : module
+            converseRoutes.includes(file) ? file : module
           }.route`;
           // eslint-disable-next-line global-require, import/no-dynamic-require
           moduleRouter.use(`/${module}`, require(routeFile));
