@@ -11,18 +11,26 @@ const AppError = require('../../../commons/appError');
 const { decode } = require('../../../utils/auth');
 const { generateUUID } = require('../../../utils/crypto');
 
-exports.login = async ({ email, enrollmentId, password }) => {
+exports.login = async ({
+  email,
+  enrollmentId,
+  password,
+  checkAdmin = false,
+}) => {
   const user = await Entity.findOne({
     $or: [{ email }, { enrollmentId }],
   }).select('+password');
 
-  if (!user || !user.active) {
+  if (!user || !user.active || (checkAdmin && !user.roles.includes('admin'))) {
     throw new AppError('User Not Found', 400);
   }
+
   if (!(await user.correctPassword(password, user.password))) {
     throw new AppError('Password Does Not Match', 401);
   }
+
   const token = generateToken(user.id);
+
   return {
     entity: {
       _id: user._id,
@@ -53,7 +61,7 @@ exports.initiateSignup = async ({ email, enrollmentId, name }) => {
         {
           new: true,
           runValidators: true,
-        }
+        },
       )
     : await Entity.create({
         email,
@@ -97,7 +105,7 @@ exports.resendOTP = async ({ email, sessionId }) => {
   await Entity.findOneAndUpdate(
     { email },
     { resendOTP: user.resendOTP + 1 },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
 
   return {
@@ -166,7 +174,7 @@ exports.resetPassword = async ({ email }) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   await sendSignupOTP({ email, name: user.name, otp });

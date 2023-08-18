@@ -39,8 +39,14 @@ const entitySchema = new mongoose.Schema(
     passwordResetOTP: Number,
     passwordResetExpires: Date,
     passwordResetAttempts: Number,
+    roles: [
+      {
+        type: String,
+        enum: ['admin'],
+      },
+    ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 entitySchema.index({ email: 1 });
@@ -65,7 +71,7 @@ entitySchema.pre('save', function (next) {
 
 entitySchema.methods.correctPassword = async function (
   candidatePassword,
-  userPassword
+  userPassword,
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
@@ -74,7 +80,7 @@ entitySchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
-      10
+      10,
     );
 
     return JWTTimestamp < changedTimestamp;
