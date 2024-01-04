@@ -9,7 +9,7 @@ mongoose.connection.on('disconnected', () => {
 });
 
 mongoose.connection.on('error', () => {
-  logger.error('MongoDB: Error connectiong to DB');
+  logger.error('MongoDB: Error connecting to DB');
 });
 
 mongoose.connection.on('reconnected', () => {
